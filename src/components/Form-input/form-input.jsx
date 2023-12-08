@@ -1,9 +1,8 @@
 import React from 'react';
 import './form-input.css';
-const FormInput = ({ name, number, change }) => {
+const FormInput = ({ name, number, change, submit }) => {
   return (
-    <>
-      <h2>PhoneBook</h2>
+    <form onSubmit={submit}>
       <div className="input-container">
         <div className="input-name">
           <h3>Name</h3>
@@ -26,9 +25,11 @@ const FormInput = ({ name, number, change }) => {
             onChange={change}
             required
           />
+      
         </div>
+        <button className='btn' type='submit'>Add contact</button>
       </div>
-    </>
+    </form>
   );
 };
 
