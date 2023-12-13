@@ -2,6 +2,8 @@ import React from 'react';
 import FormInput from './Form-input/form-input';
 import ContactList from './Contact-list/contact-list';
 import Filter from './Filter/filter';
+import { nanoid } from 'nanoid';
+import NotificationMessage from './notification-message/NotificationMessage';
 export class App extends React.Component {
   state = {
     contacts: [
@@ -13,32 +15,32 @@ export class App extends React.Component {
     filter: '',
   };
 
-  handleChange = ({ target: { value, name } }) => {
-    this.setState({
-      [name]: value,
-    });
-  };
-  ContactAdd = evt => {
-    evt.preventDefault();
-    const contact = { name: this.state.name, number: this.state.number };
+  sendContactData = data => {
+    const isContact = this.state.contacts.find(el => el.number == data.number);
+    if (isContact) return alert('Контакт Існує');
+    const userData = { ...data, id: nanoid() };
     this.setState(prevState => ({
-      contacts: [...prevState.contacts, contact],
-      name: '',
-      number: '',
+      contacts: [...prevState.contacts, userData],
     }));
   };
-  SearchContact = ({ target: { value } }) => {
-   
-    const state = this.state.contacts 
-    // const filter = state.filter((name)=> console.log(name));
-   
-    for (let i = 0; i < state.length; i++) {
-      const element = state[i];
-    
-    }
+  deleteContact = id => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(el => el.id !== id),
+    }));
   };
+
+  filterContact = ({ target: { value } }) => {
+    this.setState({
+      filter: value,
+    });
+  };
+  isEmptySearch = () => {};
+
   render() {
-    
+    const filteredContacts = this.state.contacts.filter(contact =>
+      contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
+    );
+
     return (
       <div
         style={{
@@ -51,14 +53,19 @@ export class App extends React.Component {
       >
         <h1>PhoneBook</h1>
         <FormInput
-          name={this.state.name}
-          number={this.state.number}
           change={this.handleChange}
-          submit={this.ContactAdd}
-        ></FormInput>
+          sendContactData={this.sendContactData}
+        />
         <h2>Contacts</h2>
-        <Filter change={this.SearchContact} />
-        <ContactList contacts={this.state.contacts} />
+        <Filter change={this.filterContact} />
+        {filteredContacts.length == 0 ? (
+          <NotificationMessage message={`No contact ${this.state.filter}`} />
+        ) : (
+          <ContactList
+            contacts={filteredContacts}
+            handleClick={this.deleteContact}
+          />
+        )}
       </div>
     );
   }
