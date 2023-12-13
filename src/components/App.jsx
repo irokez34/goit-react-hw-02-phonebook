@@ -16,7 +16,7 @@ export class App extends React.Component {
   };
 
   sendContactData = data => {
-    const isContact = this.state.contacts.find(el => el.number == data.number);
+    const isContact = this.state.contacts.find(el => el.number === data.number);
     if (isContact) return alert('Контакт Існує');
     const userData = { ...data, id: nanoid() };
     this.setState(prevState => ({
@@ -58,7 +58,7 @@ export class App extends React.Component {
         />
         <h2>Contacts</h2>
         <Filter change={this.filterContact} />
-        {filteredContacts.length == 0 ? (
+        {filteredContacts.length === 0 ? (
           <NotificationMessage message={`No contact ${this.state.filter}`} />
         ) : (
           <ContactList
